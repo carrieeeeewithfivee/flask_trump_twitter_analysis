@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<!-- BEGIN HEAD -->
+
+<head>
+    <meta charset="utf-8" />
+    <title>Data Science 2020 final project</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+    <!-- GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='vendor/simple-line-icons/simple-line-icons.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ url_for('static',filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet"
+        type="text/css" />
+
+    <!-- PAGE LEVEL PLUGIN STYLES -->
+    <link rel="stylesheet" href="../static/css/jqcloud.min.css">
+
+    <!-- THEME STYLES -->
+    <link href="{{ url_for('static',filename='css/layout.min.css') }}" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+    <!--========== PARALLAX ==========-->
+    <div class="parallax-window" data-parallax="scroll"
+        data-image-src="{{ url_for('static',filename='img/twitter.png') }}">
+        <div class="parallax-content container">
+            <h1 class="carousel-title">Twitter data analysis</h1>
+            <p>我們整理了川普從2009到2020五月的twitter發文 (共 48457 則) <br /> 並對其做常用詞彙分析和情緒分析</p>
+        </div>
+    </div>
+    <!--========== PARALLAX ==========-->
+
+    <!--========== PAGE LAYOUT ==========-->
+    <div class="content-lg container">
+        <div class="col-sm-10">
+            <h2>川普貼文情緒分析 (Sentiment Analysis)<br>與按讚次數,回復次數比較圖</h2>
+            <select id="years" name="year" onchange="location = this.value;">
+                <option value="/twitter">Choose year</option>
+                <option value="/all">All</option>
+                <option value="/2020">2020</option>
+                <option value="/2019">2019</option>
+                <option value="/2018">2018</option>
+                <option value="/2017">2017</option>
+                <option value="/2016">2016</option>
+                <option value="/2015">2015</option>
+                <option value="/2014">2014</option>
+                <option value="/2013">2013</option>
+                <option value="/2012">2012</option>
+                <option value="/2011">2011</option>
+                <option value="/2010">2010</option>
+                <option value="/2009">2009</option>
+            </select>
+            <p style="display: inline-block;vertical-align: middle;margin: 10px 0;">選擇年份</p>
+            <p>所有資料是以月為單位整理，而年是以天為單位整理。按讚和回覆次數都在每個圖表標準化到（-1 ~ +1）</p>
+        </div>
+        <!--// end row -->
+        <div class="row margin-b-50">
+            <canvas id="myChart" width="70%" height="30%"></canvas>
+        </div>
+        <!--// end row -->
+        <div class="col-sm-12">
+            <h3>情感分析的資料是怎麼生成的</h3>
+            <p style='color: rgb(70, 70, 70);'>我們將搜集的twitter文用2015年論文 
+                <a href="https://www.researchgate.net/publication/275828927_VADER_A_Parsimonious_Rule-based_Model_for_Sentiment_Analysis_of_Social_Media_Text">
+                    VADER: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text</a> 所提出的模型進行情緒分析。<br>
+                VADER是一個專門針對社交媒體的詞彙和基於規則的工具，VADER 代表Valence，Aware，Dictionary，sEntiment ，Reasoning。<br>
+                給定一串文本，它為文本的每個消極性，積極性和中性輸出0到1之間的小數，並且給予一個複合分數(-1~1)，也就是圖表上所看到的分數。<br><br>
+                舉例來說 : "VADER is smart, handsome, and funny." 會得到 'neg': 0.0, 'neu': 0.254, 'pos': 0.746, 'compound': 0.8316 的分數 <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                "VADER is not smart, handsome, nor funny." 會得到 'neg': 0.646, 'neu': 0.354, 'pos': 0.0, 'compound': -0.7424 明顯較差的分數。
+                <br><br>
+                VADER 的原理是透過人工構建的情緒相關的詞彙特徵列表，然後將列表與描述的一些規則組合在一起，並計算會如何加劇或減弱情緒。
+                他在針對人類評估者進行測試時，準確度得分高達84％至96％。
+                <br><br>
+                上圖所顯示的折線圖是以每日發文為單位進行分析，一天的po文分數會取平均代表。舉例來說 2020 年最低分的的po文是4/16。查詢後得知這天po文是的確火藥味十足！
+                <br><br><img src="{{ url_for('static',filename='img/tweet.png') }}" width="100%" height="100%"> 
+                <br><br>
+                有趣的是當天的按讚次數和回覆次數也挺高的，顯示過於負面的用詞也會刺激其他人對此的反應。(看右上圖)
+                
+            </p>
+            <div class="row margin-b-50"></div>
+            <h3>小結</h3>
+            <p style='color: rgb(70, 70, 70);'>透過情感分析，我們從2009到2020可以觀察到川普平均VADER分數逐漸下滑，而按讚和回覆次數則是在選舉期間大漲並持續上升。
+                2019年1月達到巔峰。當時是美國聯邦政府停擺事件，源於國會未能打破川普推行的美墨邊境牆的57億美元預算僵局。3月開始人氣下降，而在年末爆發疫情達到谷底。
+                <br><br>
+                <img src="{{ url_for('static',filename='img/tweet2.png') }}" width="100%" height="100%"> 
+                2019年最多人按讚貼文與用詞偏激貼文
+                <br><br>
+                全部資料的按讚次數和回覆次數都是以月為單位平均的結果，而各年詳細資料是以日為單位平均。<br>
+                從全部資料可以看出波動由重大事件引起，而從各年詳細波動可以發現些較負面的用詞會刺激其他人對此的反應。
+            </p>
+        </div>
+        <!--// end row -->
+        <div class="row margin-b-50"></div>
+        <div class="col-sm-12">
+            <h2>常用字彙文字雲</h2>
+            <select id="years" name="year" onchange="location = this.value;">
+                <option value="/twitter">Choose year</option>
+                <option value="/all">All</option>
+                <option value="/2020">2020</option>
+                <option value="/2019">2019</option>
+                <option value="/2018">2018</option>
+                <option value="/2017">2017</option>
+                <option value="/2016">2016</option>
+                <option value="/2015">2015</option>
+                <option value="/2014">2014</option>
+                <option value="/2013">2013</option>
+                <option value="/2012">2012</option>
+                <option value="/2011">2011</option>
+                <option value="/2010">2010</option>
+                <option value="/2009">2009</option>
+            </select>
+            <p style="color: rgb(70, 70, 70); display: inline-block;vertical-align: middle;margin: 5px 0;">選擇年份</p>
+            <form method="POST">
+                <input name="stop_words" id="stop_words" placeholder="輸入移除字彙">
+                <input type="submit" value="送出">
+                <a href="/reset" style="display: inline-block;vertical-align: middle;margin: 10px 0;"><input type="button" value="回上一步" class="button"></a>
+                <p style="color: rgb(70, 70, 70); display: inline-block;vertical-align: middle;margin: 10px 0;">被移除的文字 : {{stop_words}}</p>
+            </form>
+            <a href="/reset"><input type="button" value="用所有字彙" class="button"></a>
+            <a href="/noun"><input type="button" value="只用專有名詞" class="button"></a>
+        </div>
+        <!--// end row -->
+        <div class="row margin-b-50">
+            <center>
+                <div id="twitter_word_cloud">
+                </div>
+            </center>
+        </div>
+        <!--// end row -->
+        <div class="col-sm-12">
+            <h3>文字雲如何生成及結論</h3>
+            <p style="color: rgb(70, 70, 70);">我們將川普所有貼文字彙提取，並去除連結和hashtag，還有<a href="https://www.nltk.org/">自然語言處理 NTLK</a>
+                所定義為停用字（Stopwords）的文字。接下來透過 <a href="http://mistic100.github.io/jQCloud/demo.html">JQCLOUD</a>將文字雲呈現。
+                因為很多字沒有太大意義，因此提供自訂停用字的功能，並且也用月份生成，來觀察常用字彙變化，也提供只顯示專有名詞的功能。
+                <br><br>
+                刪去較常見的字彙後可以觀察到一些有名的川普字彙，如：<br> 
+                Obama : 1845次， Fake : 797次， China : 877次 等等...<br>
+                但我們認為用文字雲效果不佳，需要大量人工處理，搜集時間也過長不好顯示差異。如果針對類型整理可能效果比較好。
+            </p>
+        </div>
+        <!--// end row -->
+
+    </div>
+    <!--========== END PAGE LAYOUT ==========-->
+
+    <!-- Back To Top -->
+    <a href="javascript:void(0);" class="js-back-to-top back-to-top">Top</a>
+
+    <!-- JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+    <!-- CORE PLUGINS -->
+    <script src="{{ url_for('static',filename='vendor/jquery.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static',filename='vendor/jquery-migrate.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static',filename='vendor/bootstrap/js/bootstrap.min.js') }}"
+        type="text/javascript"></script>
+
+    <!-- PAGE LEVEL PLUGINS -->
+    <script src="{{ url_for('static',filename='vendor/jquery.wow.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static',filename='vendor/jquery.parallax.min.js') }}" type="text/javascript"></script>
+    <!-- PAGE LEVEL SCRIPTS -->
+    <script src="{{ url_for('static',filename='js/layout.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static',filename='js/components/wow.min.js') }}" type="text/javascript"></script>
+    <script type="text/javascript" src="../static/js/jqcloud.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+    <script type="text/javascript" src="../static/js/script.js"></script>
+    <script type="text/javascript">
+		// Global parameters:
+        Chart.defaults.global.responsive = true;
+ 
+        // define the chart data
+        var chartData = {labels : [{% for item in labels %}"{{item}}",{% endfor %}],
+                        datasets : 
+                        [
+                            {label: '{{ legend }}',
+                            fill: true,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(75,192,192,0.4)",
+                            borderColor: "rgba(75,192,192,1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(75,192,192,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data : [{% for item in values %}{{item}},{% endfor %}],
+                            spanGaps: false},
+
+                            {label: '{{ fc_legend }}',
+                            fill: false,
+                            lineTension: 0.05,
+                            backgroundColor: "rgba(255,0,0,0.4)",
+                            borderColor: "rgba(255,0,0,0.7)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(255,0,0,0.7)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(255,0,0,0.7)",
+                            pointHoverBorderColor: "rgba(255,0,0,0.7)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data : [{% for item in fc_values %}{{item}},{% endfor %}],
+                            spanGaps: false},
+
+                            {label: '{{ rc_legend }}',
+                            fill: false,
+                            lineTension: 0.05,
+                            backgroundColor: "rgba(0,128,0,0.4)",
+                            borderColor: "rgba(0,128,0,0.7)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(0,128,0,0.7)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(0,128,0,0.7)",
+                            pointHoverBorderColor: "rgba(0,128,0,0.7)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data : [{% for item in rc_values %}{{item}},{% endfor %}],
+                            spanGaps: false}
+                        ]}
+  
+        // get chart canvas
+        var ctx = document.getElementById("myChart").getContext("2d");
+  
+        // create the chart using the chart canvas
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+        });
+	</script>
+</body>
+<!-- END BODY -->
+
+</html>
