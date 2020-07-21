@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 app = Flask(__name__, template_folder='templates')
 import pickle
-#import nltk
-#nltk.download('averaged_perceptron_tagger')
+import nltk
+nltk.download('averaged_perceptron_tagger')
 import json
 
 #parameters for word cloud
@@ -129,9 +129,9 @@ def twitter_word_cloud():
             for words in words_json[:]:
                 global stage
                 if stage == 1:
-                    #if (not nltk.pos_tag([words['text']])[0][1].startswith('NNP') and words['text']!="Coronavirus"):
-                    #    words_json.remove(words)
-                    if words['text'] in stop_words:
+                    if (not nltk.pos_tag([words['text']])[0][1].startswith('NNP') and words['text']!="Coronavirus"):
+                        words_json.remove(words)
+                    elif words['text'] in stop_words:
                         words_json.remove(words)
                 else:
                     if words['text'] in stop_words:
