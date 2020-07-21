@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates') 
 import pickle
 import nltk
 nltk.download('averaged_perceptron_tagger')
