@@ -208,5 +208,4 @@ def _2009():
     return redirect('/')
 
 if __name__ == '__main__':
-    #app.debug = True
-    app.run()
+    app.run(threaded=True, port=5000)
