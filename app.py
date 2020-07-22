@@ -30,6 +30,12 @@ global rc_values #retweet counts
 rc_values = []
 global rc_legend
 
+# Ensure responses aren't cached
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response
+
 @app.route('/')
 def home_page():
     global values
